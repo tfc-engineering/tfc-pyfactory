@@ -1,7 +1,10 @@
+import pathlib
+file_path = str(pathlib.Path(__file__).parent.resolve()) + "/"
+
 import sys
-sys.path.append("..")
-import InputParameters
-from InputParameters import Parameter
+sys.path.append(file_path + "../")
+
+from tfc_PyFactory import *
 
 import json
 import yaml
@@ -12,13 +15,13 @@ p2 = Parameter("dt", 0.0)
 print(p1.getBooleanValue())
 print(p2.getBooleanValue())
 
-json_file = open("input_file.json")
+json_file = open(file_path + "test_01a.json")
 
 p3 = Parameter("p3", json.load(json_file))
 
 print(p3)
 
-yaml_file = open("input_file.yaml")
+yaml_file = open(file_path + "test_01a.yaml")
 
 p4 = Parameter("p4", yaml.safe_load(yaml_file))
 

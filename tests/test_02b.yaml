@@ -1,0 +1,4 @@
+doc_generator:
+  type: TestObject
+  option: 1
+

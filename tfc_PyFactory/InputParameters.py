@@ -1,3 +1,4 @@
+from __future__ import annotations
 import enum
 
 
@@ -54,6 +55,19 @@ class Parameter:
             for sub_name in value:
                 self.addParameter(sub_name, value[sub_name])
             self.value = None
+
+        elif isinstance(value, Parameter):
+            if value.type == ParameterType.ARRAY:
+                self.type = ParameterType.ARRAY
+                self.sub_params = value.sub_params
+                self.value = None
+            elif value.type == ParameterType.BLOCK:
+                self.type = ParameterType.BLOCK
+                self.sub_params = value.sub_params
+                self.value = None
+            else:
+                self.type = value.type
+                self.value = value.value
         else:
             self.type = ParameterType.NO_VALUE
             self.value = None
@@ -97,13 +111,13 @@ class Parameter:
         if self.type != ParameterType.STRING:
             raise Exception(f'ERROR: Cannot convert parameter "{self.name}" to str. It is of'
                             f'type {str(self.type)}')
-        return float(self.value)
+        return str(self.value)
 
     def getValue(self):
         """Returns the arbitrary value of the parameter"""
         return self.value
 
-    def getParam(self, str_or_num):
+    def getParam(self, str_or_num) -> Parameter:
         """Returns the sub-parameter at the given index or name"""
         if isinstance(str_or_num, str):
             for sub_param in self.sub_params:
@@ -113,13 +127,13 @@ class Parameter:
             return self.sub_params[int(str_or_num)]
 
         raise Exception(
-            f'ERROR: Parameter "{self.name}" has no sub-parameter at {str_or_num}')
+            f'ERROR: Parameter "{self.name}" has no sub-parameter with key "{str_or_num}"')
 
-    def __iter__(self):
+    def __iter__(self) -> Parameter:
         self.n = 0
         return self
 
-    def __next__(self):
+    def __next__(self) -> Parameter:
         if self.n < len(self.sub_params):
             ret_val = self.sub_params[self.n]
             self.n += 1
@@ -153,7 +167,7 @@ class Parameter:
 
 
 class InputParameterTag:
-    def __init__(self, tag_name: str, value: any):
+    def __init__(self, tag_name: str, value: any = 0):
         self.tag_name = tag_name
         self.value = value
 
@@ -163,10 +177,13 @@ class InputParameters(Parameter):
         super().__init__("", None)
 
         self.tags = {}
+        self.params_at_assignment_ = None
 
-    def addOptionalParameter(param_name: str, default_value: any, doc_string: str,
+    def addOptionalParam(self, param_name: str, default_value: any, doc_string: str,
                              tags: list = []):
-        for param in self.sub_params:
+        """Adds an optional parameter."""
+
+        if param_name in self.sub_params:
             raise Exception(f'ERROR: Parameter "{param_name}" already exists')
         self.addParameter(param_name, default_value)
 
@@ -182,11 +199,12 @@ class InputParameters(Parameter):
         for tag in tags:
             tag_list.append(tag)
 
-    def addRequiredParam(param_name: str, param_type: ParameterType, doc_string: str,
-                         tags: list):
-        for param in self.sub_params:
+    def addRequiredParam(self, param_name: str, param_type: ParameterType, doc_string: str,
+                         tags: list = []):
+        """Adds a required parameter."""
+
+        if param_name in self.sub_params:
             raise Exception(f'ERROR: Parameter "{param_name}" already exists')
-        self.addParameter(param_name, default_value)
 
         if param_type == ParameterType.BOOLEAN:
             self.addParameter(param_name, False)
@@ -213,8 +231,10 @@ class InputParameters(Parameter):
         for tag in tags:
             tag_list.append(tag)
 
-    def assignParameters(params: Parameter):
+    def assignParameters(self, params: Parameter):
         """Assigns a parameter block to this input-parameters block"""
+
+        self.params_at_assignment_ = params
 
         # First check all the parameters are valid
         for param in params:
@@ -233,7 +253,7 @@ class InputParameters(Parameter):
             tag_list = self.tags[in_param.name]
 
             for tag in tag_list:
-                if tag.name == "required":
+                if tag.tag_name == "required":
                     found = False
                     for param in params:
                         if param.name == in_param.name:
@@ -242,7 +262,7 @@ class InputParameters(Parameter):
 
                     if not found:
                         raise Exception(f'ERROR: Required parameter "{in_param.name}"'
-                                        'not supplied.')
+                                        ' not supplied.')
 
         # Now assign the parameters
         for param in params:
@@ -252,16 +272,16 @@ class InputParameters(Parameter):
 
                     mutable = False
                     for tag in tag_list:
-                        if tag.name == "mutable":
+                        if tag.tag_name == "mutable":
                             mutable = True
                             break
 
                     if mutable:
-                        in_param.setValue(param.value)
+                        in_param.setValue(param)
                     else:
                         if in_param.type != param.type:
                             raise Exception(f'ERROR: Attempting to assign type {str(param.type)}'
                                             f'to parameter "{in_param.name}" which is of type '
                                             f'{str(in_param.type)}')
 
-                        in_param.setValue(param.value)
+                        in_param.setValue(param)

@@ -1,0 +1,33 @@
+test_01:
+  args: "test_01a_Parameter.py"
+  checks: [
+    {
+      type: ExitCodeCheck,
+      gold_value: 0
+    }
+  ]
+test_02a:
+  args: test_02a_ObjectFactory.py
+  checks: [
+    {
+      type: ExitCodeCheck,
+      gold_value: 1
+    }
+  ]
+test_02b:
+  args: test_02b_ObjectFactory.py
+  checks: [
+    {
+      type: ExitCodeCheck,
+      gold_value: 0
+    }
+  ]
+test_02c:
+  args: "test_02c_ObjectFactory.py"
+  skip: "Skip test"
+  checks: [
+    {
+      type: ExitCodeCheck,
+      gold_value: 0
+    }
+  ]
