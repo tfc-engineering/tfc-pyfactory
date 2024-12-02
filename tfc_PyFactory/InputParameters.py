@@ -89,28 +89,28 @@ class Parameter:
         """Returns the boolean value of the parameter"""
         if int(self.type) > 3:
             raise Exception(f'ERROR: Cannot convert parameter "{self.name}" to bool. It is of'
-                            f'type {str(self.type)}')
+                            f' type {str(self.type)}')
         return bool(self.value)
 
     def getIntegerValue(self) -> int:
         """Returns the integer value of the parameter"""
         if int(self.type) > 3:
             raise Exception(f'ERROR: Cannot convert parameter "{self.name}" to int. It is of'
-                            f'type {str(self.type)}')
+                            f' type {str(self.type)}')
         return int(self.value)
 
     def getFloatValue(self) -> float:
         """Returns the float value of the parameter"""
         if int(self.type) > 3:
             raise Exception(f'ERROR: Cannot convert parameter "{self.name}" to float. It is of'
-                            f'type {str(self.type)}')
+                            f' type {str(self.type)}')
         return float(self.value)
 
     def getStringValue(self) -> str:
         """Returns the float value of the parameter"""
         if self.type != ParameterType.STRING:
             raise Exception(f'ERROR: Cannot convert parameter "{self.name}" to str. It is of'
-                            f'type {str(self.type)}')
+                            f' type {str(self.type)}')
         return str(self.value)
 
     def getValue(self):
@@ -281,7 +281,7 @@ class InputParameters(Parameter):
                     else:
                         if in_param.type != param.type:
                             raise Exception(f'ERROR: Attempting to assign type {str(param.type)}'
-                                            f'to parameter "{in_param.name}" which is of type '
+                                            f' to parameter "{in_param.name}" which is of type '
                                             f'{str(in_param.type)}')
 
                         in_param.setValue(param)

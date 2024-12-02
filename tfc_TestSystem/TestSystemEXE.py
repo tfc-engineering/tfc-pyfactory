@@ -14,6 +14,11 @@ from tfc_PyFactory import *
 from tfc_TestSystem import *
 import tfc_TestSystem
 
+# ---------------------------------------------------------
+#                    Link custom source here
+# sys.path.append(file_path + "../RELAP_custom_src")
+# from RELAP_checks import *
+# ---------------------------------------------------------
 
 # ========================================================= Process commandline
 #                                                           arguments
@@ -48,6 +53,11 @@ parser.add_argument(
                                 "6=Long+Intermediate, "
                                 "7=All"
 )
+parser.add_argument(
+    "-c", "--config_file", default="TestSystemCONFIG.yaml", type=str,
+    required=False,
+    help="The name of the default config file"
+)
 
 argv = parser.parse_args()  # argv = argument values
 
@@ -57,5 +67,9 @@ params["directory"] = argv.directory
 params["executable"] = argv.executable
 params["num_jobs"] = argv.num_jobs
 params["weights"] = argv.weights
+params["config_file"] = argv.config_file
 
 test_system = PyFactory.makeObject("TFCTestSystem", Parameter("", params))
+error_code = test_system.run()
+
+exit(error_code)

@@ -12,6 +12,7 @@ from tfc_PyFactory import *
 from .CheckBase import *
 
 class ExitCodeCheck(CheckBase):
+    '''Compares the test's exit code against a desired value.'''
     @staticmethod
     def getInputParameters() -> InputParameters:
         params = CheckBase.getInputParameters()

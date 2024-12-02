@@ -24,6 +24,13 @@ class CheckBase(TFCObject):
         self.fail_reason_: str = "Unknown"
 
 
+    # config = dict(
+    #         test = self,
+    #         test_system = test_system,
+    #         error_code = error_code,
+    #         out_file_name = out_file_name,
+    #         out_directory = dir_+"/out"
+    #     )
     def executeCheck(self, config: dict, annotations: list[str]) -> bool:
         """Executes a given check.
         The 'annotations' parameter is a list of annotations to provide

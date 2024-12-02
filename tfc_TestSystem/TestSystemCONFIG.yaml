@@ -1,2 +1,3 @@
 default_executable: python3
 print_width: 97
+env_vars: ["COMPILER"]
